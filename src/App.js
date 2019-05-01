@@ -1,59 +1,61 @@
 import React, { Component } from 'react';
 import inventory, { categories } from './inventory'
+import './App.css';
 import Product from './Product'
 import CategoryButton from './Category-Button'
-import './App.css';
 
 class App extends Component {
   constructor(props) {
-    super(props)
-    categories.push('All')
+    super(props);
+
+    categories.push('All');
+
     this.state = {
-      currentCategory: 'All'
-    }
+      currentCategory: !null,
+    };
   }
+
   setCategory(cat) {
-    console.log(cat)
-    this.setState({ currentCategory: cat})
+    this.setState({ currentCategory: cat });
   }
 
   render() {
-    const cats = categories.map((cat) => {
+    const { currentCategory } = this.state;
+    const cats = categories.map(cat => (
+      <CategoryButton
+        isSelected={currentCategory === 'cat'}
+        key={cat}
+        label={cat}
+        onClick={currentCategory => this.setCategory(currentCategory)}
+      />));
+
+    const products = inventory.filter(
+      item => item.category === currentCategory || currentCategory === 'All',
+    ).map((item, index) => {
+      const { name, description, price } = item;
       return (
-        <CategoryButton
-          selected={this.state.currentCategory === cat}
-          key={cat}
-          label={cat}
-          onClick={ (cat) => this.setCategory(cat) }
+        <Product
+          key={`${name.id} - ${index.id}`}
+          title={name}
+          desc={description}
+          price={price}
         />
-      )
-    })
-
-    const products = inventory.filter((item) => {
-      return item.category === this.state.c
-      
-      (
-        <div>
-          <h3>{item.name}</h3>
-          <p>{item.price}</p>
-          <p>{item.description}</p>
-        </div>
-      )
-
-    })
+      );
+    });
 
     return (
       <div className="App">
-        <h1>Show products here</h1>
+        <h1>Wonder Emporium</h1>
 
-        <ul>
+        <div className="Categories">
           {cats}
-        </ul>
+        </div>
 
-        <ul>
+        <div className="Products">
           {products}
-        </ul>
+        </div>
 
+        <div className="inventory" />
       </div>
     );
   }
